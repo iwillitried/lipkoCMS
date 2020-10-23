@@ -68,7 +68,7 @@ async function connect(method = "", route = "", body = {}) {
   }
   if (method != "GET") options.body = JSON.stringify(body);
 
-  const response = await fetch("http://localhost:3000/" + route, options);
+  const response = await fetch("https://lipko-backend.herokuapp.com/" + route, options);
   return response.json(); // parses JSON response into native JavaScript objects
 }
 
@@ -80,7 +80,7 @@ async function connect(method = "", route = "", body = {}) {
 // }
 
 function deleteElement(id, isK) {
-  connect("DELETE", "api/"+ (isK?"k":"h") + "/"+ id); 
+  connect("DELETE", "api/"+ (isK?"k":"h") + "/"+ id);
 }
 
 function putMark(mark) {
