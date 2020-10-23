@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Sende Übersicht</title>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/master.css">
+  <link rel="stylesheet" href="css/popup.css">
+  <script src="ui.js" charset="utf-8"></script>
+  <script src="index.js" charset="utf-8"></script>
+</head>
+
+<body>
+  <header>
+    <button type="button" name="addButton" class="headerButton" id="addButton">Erstellen</button>
+    <div class="dateNavigator">
+      <ul class="headerCenterBox">
+        <li>
+          <p id="dateField">...</p>
+        </li>
+        <li class="dateNavigator buttonBox">
+
+          <div></div>
+          <button type="button" name="button" id="navButton" style="transform: rotateZ(180deg);">
+            ►</button> <button type="button" name="button">Jetzt
+          </button>
+          <button type="button" name="button" id="navButton">►</button>
+          <div></div>
+
+        </li>
+      </ul>
+
+
+
+    </div>
+    <button type="button" name="changeButton" class="headerButton kView" id="changeButton">Ansicht wechseln</button>
+    <button type="button" name="searchButton" class="headerButton" id="searchButton">Suchen</button>
+  </header>
+
+
+
+  <main>
+    <div id="loadingAnimation" class="col-sm-2">
+      <div id="wave1">
+
+      </div>
+      <p id="loadingP">Lade Daten...</p>
+    </div>
+
+    <div class="searchBox">
+      <input type="text" name="" value="" class="searchBox_input" placeholder="Suchen...">
+    </div>
+
+    <div class="rowBox">
+
+    </div>
+
+  </main>
+
+  <div class="modal_bg"></div>
+  <div class="modal_container" id="modal">
+
+    <div class="modal_header">
+      <h1 class="modal_headline">Bearbeiten</h1>
+      <div class="modal_close_button">x</div>
+    </div>
+    <div class="modal_body">
+      <div class="modal_body_left">
+        <h2>Name</h2>
+        <input type="text" name="modal_input_name" value="">
+        <h2>Land</h2>
+        <input type="text" name="modal_input_name" value="" placeholder="(optional)">
+        <p>Die Kombination aus Name und Land sollte den Hersteller eindeutig beschreiben. Beides kann nach dem Erstellen jederzeit angepasst werden.</p>
+      </div>
+      <div class="modal_body_right">
+        <h2>Verknüpfte Kunden</h2>
+        <div class="modal_body_right_scrollbox">
+          <div class="scrollbox_included">
+            <div class="scrollbox_item">
+              <div class="modal_exclude_button modal_scrollbox_button modal_button_animation"></div>
+              <p>Kunde 1</p>
+            </div>
+
+          </div>
+          <hr class="solid">
+          <div class="scrollbox_excluded">
+            <div class="scrollbox_item">
+              <div class="modal_include_button modal_scrollbox_button modal_button_animation"></div>
+              <p>Kunde 1</p>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal_body_right_searchbox">
+          <div></div>
+          <input class="modal_searchbar" type="text" name="" value="" placeholder="Suchen oder neu erstellen">
+          <!-- <div></div> -->
+          <div class="modal_include_button modal_searchbar_button modal_button_animation"></div>
+          <!-- <div></div> -->
+        </div>
+        <div></div>
+        <div class="modal_body_right_buttonbox">
+          <button class="red_button modal_button modal_button_animation" name="button">Löschen</button>
+          <button class="blue_button modal_button modal_button_animation" name="button">Speichern</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <script src="ui.js" charset="utf-8"></script>
+  <script src="index.js" charset="utf-8"></script>
+  <script src="modal.js" charset="utf-8"></script>
+</body>
+
+
+
+
+</html>
