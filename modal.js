@@ -267,8 +267,7 @@ function show_add_modal() {
 
 function show_message_modal(row) {
   let kunde = getElementFromID(row.id, data.kunden);
-  console.log("Kunde:");
-  console.log(kunde);
+  let notiz = kunde.notiz || ""
   current_row = row;
   isShowingNote = true;
   let content = `
@@ -277,7 +276,7 @@ function show_message_modal(row) {
     <div class="modal_close_button">x</div>
   </div>
   <div class="modal_body_message">
-    <textarea id="textarea" type="text" placeholder="Kunden Notiz anfügen">${kunde.notiz}</textarea>
+    <textarea id="textarea" type="text" placeholder="Kunden Notiz anfügen">${notiz}</textarea>
   </div>
   `;
   let modal = document.getElementById("modal");
