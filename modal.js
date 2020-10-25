@@ -55,7 +55,10 @@ function showModal() {
 }
 
 function remove_object_after_animating_out() {
-  if (this.style.opacity == "0") {
+  console.log("remove_object_after_animating_out for ");
+  console.log(this);
+  console.log("This.style.opacity = ");
+  if (this.style.opacity == "0%") {
     console.log("removed object " + this);
     this.style.display = "none";
   }
@@ -156,10 +159,12 @@ function initModal() {
   // Modal backgrounde hide when click outside
   modal_bg.addEventListener("click", hide_modal);
   modal_bg.addEventListener("transitionend", remove_object_after_animating_out);
+  modal_bg.addEventListener('webkitAnimationEnd',remove_object_after_animating_out);
   modal_bg.style.display = "none";
   modal_bg.style.opacity = "0%";
 
   modal.addEventListener("transitionend", remove_object_after_animating_out);
+  modal.addEventListener('webkitAnimationEnd',remove_object_after_animating_out);
   modal.style.display = "none";
   modal.style.opacity = "0%";
   modal_close_button.addEventListener("click", hide_modal);
@@ -178,6 +183,8 @@ function initModal() {
   modal_save_button.onclick = function() {
     modal_save_button_clicked();
   };
+
+  if (!isEditing) return; // If edit modal -> config delete button too
 
   modal_delete_button.onclick = function() {
     modal_delete_button_clicked();
@@ -226,6 +233,7 @@ function show_edit_modal(e) {
 }
 
 function show_add_modal() {
+  console.log("Show edit modal!");
   isEditing = false;
   current_entry = {
     name: "",
