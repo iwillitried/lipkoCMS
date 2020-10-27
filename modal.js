@@ -58,7 +58,7 @@ function remove_object_after_animating_out() {
   console.log("remove_object_after_animating_out for ");
   console.log(this);
   console.log("This.style.opacity = ");
-  if (this.style.opacity == "0%") {
+  if (this.style.opacity == "0%" || this.style.opacity == "0") {
     console.log("removed object " + this);
     this.style.display = "none";
   }
