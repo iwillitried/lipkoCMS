@@ -89,7 +89,7 @@ function putMark(mark) {
 
 function putElement(element, isK, callback) {
   connect("PUT", "api/" + (isK ? "k" : "h"), element).then(data => {
-    callback();
+    if (callback) callback();
   });
 }
 
