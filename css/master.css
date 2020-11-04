@@ -219,18 +219,18 @@ div.collapsibleMessage {
 }
 
 .messageHide {
-  display: hidden;
+  visibility: hidden;
   pointer-events: none;
   /* background: url("../images/blank.png") no-repeat; */
 }
 
 .messageShow {
-  display: inherit;
+  visibility: visible;
   background: url("../images/Message Circle@3x.png") no-repeat;
 }
 
 .messageNew {
-  display: inherit;
+  visibility: visible;
   background: url("../images/New Message Circle@3x.png") no-repeat;
 }
 
