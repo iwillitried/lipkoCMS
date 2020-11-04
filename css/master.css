@@ -220,6 +220,7 @@ div.collapsibleMessage {
 
 .messageHide {
   display: hide;
+  pointer-events: none;
   /* background: url("../images/blank.png") no-repeat; */
 }
 
