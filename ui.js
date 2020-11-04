@@ -1,17 +1,20 @@
 var clickedRowButton = false;
 var beforeSearchHTMLContent = "";
 var uiInited = false;
+var loadingTimeouts = [];
 
 function showLoadingAnimation() {
+  console.log("Showing loading animation: NOW!");
   let loadingAnimation = document.getElementById("loadingAnimation");
   loadingAnimation.style.display = "inherit";
+  loadingAnimation.style.opacity = "100%";
   loadingAnimation.children[0].style.display = "absolute";
   loadingAnimation.children[1].style.display = "absolute";
   loadingAnimation.children[1].innerHTML = "Lade Daten...";
-  setTimeout(() => {
+  loadingTimeouts[0] = setTimeout(() => {
     loadingAnimation.children[1].innerHTML = "Das Laden dauert länger als erwartet...";
   }, 4000);
-  setTimeout( ()=> {
+  loadingTimeouts[1] = setTimeout( ()=> {
     loadingAnimation.children[1].innerHTML = "Fehlgeschlagen Besteht eine Internetverbindung?";
   }, 10000);
 }
@@ -19,8 +22,13 @@ function showLoadingAnimation() {
 function hideLoadingAnimation() {
   let loadingAnimation = document.getElementById("loadingAnimation");
   loadingAnimation.style.display = "none";
-  loadingAnimation.children[0].style.display = "none";
-  loadingAnimation.children[1].style.display = "none";
+  loadingAnimation.style.opacity = "0%";
+  loadingTimeouts.forEach((timeout) => {
+    clearTimeout(timeout);
+  });
+
+  // loadingAnimation.children[0].style.display = "none";
+  // loadingAnimation.children[1].style.display = "none";
 }
 
 function showTimoutError() {
@@ -87,7 +95,7 @@ function renderPage() {
   rowBox.innerHTML = "";
   let prim = showK ? kunden : hersteller;
   for (var i = 0; i < prim.length; i++) {
-    if (prim.name == "Gesamt") continue; // Gesamgt soll nicht als Row angezeigt werden 
+    if (prim[i].name == "Gesamt") continue; // Gesamgt soll nicht als Row angezeigt werden
     let primElement = getElementFromID(prim[i]._id, showK ? kunden : hersteller);
     let sec = prim[i].linkedIDs;
     var htmlContent = "";
@@ -396,23 +404,25 @@ function reloadUI() {
   let dateString = pageIDToDateString(pageID);
   let dateField = document.getElementById("dateField");
   dateField.innerHTML = dateString;
+  console.log("Hiding page");
   hidePage();
+  console.log("Showing loading animation");
   showLoadingAnimation();
 
 console.log("Reload UI!");
   // Reload page, kunden and hersteller data
   getWithRoute("api/page/" + pageID, (fetchedData) => {
     // Show error if the data is missing
-    console.log("Got page data: ");
-    console.log(fetchedData);
+    // console.log("Got page data: ");
+    // console.log(fetchedData);
     if (!(fetchedData)) {
       showTimoutError();
       return;
     }
     data.page = fetchedData;
     getWithRoute("api/", (fetchedData) => {
-      console.log("Got entity data: ");
-      console.log(fetchedData);
+      // console.log("Got entity data: ");
+      // console.log(fetchedData);
       // Show error if the data is missing
       if (!(fetchedData && fetchedData.kunden && fetchedData.hersteller)) {
         showTimoutError();

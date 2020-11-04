@@ -333,6 +333,10 @@ p.checkBoxRightLabel {
 }
 
 /* Loading Animation */
+.col-sm-2 {
+  opacity: 0%;
+  transition: opacity 2s ease-out;
+}
 .col-sm-2 p {
   text-align: center;
   position: absolute;

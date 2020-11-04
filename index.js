@@ -1,14 +1,15 @@
 // BUGS: (null)
-// TODO: add screen
-// TODO: edit screen
-// TODO: load new page
-// TODO: fix dateField position (and resizing when too small!)
-// TODO: upload new stuff to backend
-// TODO: fetch pages from backend
-// TODO: fetch updates from backend periodically
-// TODO: upload changes to backend
-// TODO: implement form check against i.g. sql injection
+// TODO: DONE add screen
+// TODO: DONE edit screen
+// TODO: DONE load new page
+// TODO: DONE upload changes to backend
+// TODO: DONE upload new stuff to backend
+// TODO: DONE fetch pages from backend
 
+// TODO: SUSPENDED fetch updates from backend periodically
+// TODO: ALMOST PERFECT fix dateField position (and resizing when too small!)
+// TODO: OPEN implement form check against i.g. sql injection
+// TODO: OPEN loading animation when page transition
 
 var masterTimeoutID = "";
 var showK = true; // Show Kunden or Hersteller mode
