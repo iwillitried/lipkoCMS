@@ -82,6 +82,7 @@
 
 .modal_body_left input {
   height: 25px;
+  width: 90%; 
 }
 
 .modal_body_left h2 {
