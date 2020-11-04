@@ -95,7 +95,7 @@ function renderPage() {
   rowBox.innerHTML = "";
   let prim = showK ? kunden : hersteller;
   for (var i = 0; i < prim.length; i++) {
-    if (prim[i].name == "Gesamt" && !show) continue; // Gesamgt soll nicht als Row angezeigt werden
+    if (prim[i].name == "Gesamt" && !showK) continue; // Gesamgt soll nicht als Row angezeigt werden
     let primElement = getElementFromID(prim[i]._id, showK ? kunden : hersteller);
     let sec = prim[i].linkedIDs;
     var htmlContent = "";
