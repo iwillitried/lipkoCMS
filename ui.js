@@ -70,11 +70,16 @@ function renderPage() {
   let hersteller = data.hersteller;
   let kunden = data.kunden;
   let main = document.getElementsByTagName("main")[0];
+  let searchInput = document.getElementById("searchInput");
+
+  // Show the right placeholder text inside searchbar
+  searchInput.placeholder = showK?"Kunden suchen...":"Hersteller suchen..."
 
   if (!(page && hersteller && kunden)) {
     return;
     console.error("Error initializing UI: Data field incomplete");
   }
+
 
   // main.innerHTML = `
   // <div class="col-sm-2">
@@ -394,7 +399,12 @@ function rowPressed(row) {
   checkbox.classList.toggle("unmarked");
 
   mark.isMarked = !mark.isMarked;
-  if (mark.isMarked) mark.lastModifiedTime = Date.now();
+  if (mark.isMarked) {
+    mark.lastModifiedTime = Date.now();
+  } else {
+    mark.lastModifiedTime = -1;
+  }
+
   row.childNodes[5].innerHTML = dateToTimeLabel(mark.lastModifiedTime)
   putMark(mark);
   updateStatusCircle(row.parentNode.parentNode);

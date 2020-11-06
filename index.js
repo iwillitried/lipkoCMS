@@ -197,6 +197,7 @@ function getElementFromID(id, array) {
 
 function dateToTimeLabel(date) {
   if (date == null) return "nie";
+  if (date == -1) return "-"; 
 
   const d = new Date(date);
   const ye = new Intl.DateTimeFormat('de', {
