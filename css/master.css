@@ -267,6 +267,19 @@ div.checkbox {
   height: 50px;
 }
 
+.checkboxMessageDot {
+  height: 20px;
+  width: 20px;
+  margin-top: 20px;
+  background-color: orange;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.noDot {
+  visibility: hidden;
+}
+
 .unmarked {
   background: url("../images/Status Small False@3x.png");
   background-size: contain;
@@ -279,7 +292,7 @@ div.checkbox {
 
 .checkboxRow {
   display: grid;
-  grid-template-columns: 70px auto 100px;
+  grid-template-columns: 70px fit-content(500px) auto 100px;
 }
 
 p.checkBoxLeftLabel {

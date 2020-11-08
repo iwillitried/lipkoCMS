@@ -14,7 +14,7 @@ function showLoadingAnimation() {
   loadingTimeouts[0] = setTimeout(() => {
     loadingAnimation.children[1].innerHTML = "Das Laden dauert länger als erwartet...";
   }, 4000);
-  loadingTimeouts[1] = setTimeout( ()=> {
+  loadingTimeouts[1] = setTimeout(() => {
     loadingAnimation.children[1].innerHTML = "Fehlgeschlagen Besteht eine Internetverbindung?";
   }, 10000);
 }
@@ -51,11 +51,12 @@ function createColl(id, text, content) {
   `;
 }
 
-function createRow(markID, isMarked, name, lastModifiedTime) {
+function createRow(markID, isMarked, name, lastModifiedTime, hasNote) {
   return `
   <div class="checkboxRow" id=${markID} onclick=rowPressed(this)>
     <div class="checkbox ${(isMarked?"marked":"unmarked")}"></div>
     <p class="checkBoxLeftLabel">${name}</p>
+    <div class="checkboxMessageDot ${hasNote?"":"noDot"}"></div>
     <p class="checkBoxRightLabel">${dateToTimeLabel(lastModifiedTime)}</p>
   </div>
   `;
@@ -73,7 +74,7 @@ function renderPage() {
   let searchInput = document.getElementById("searchInput");
 
   // Show the right placeholder text inside searchbar
-  searchInput.placeholder = showK?"Kunden suchen...":"Hersteller suchen..."
+  searchInput.placeholder = showK ? "Kunden suchen..." : "Hersteller suchen..."
 
   if (!(page && hersteller && kunden)) {
     return;
@@ -110,7 +111,7 @@ function renderPage() {
       let hID = showK ? sec[j] : prim[i]._id;
       let mark = getMarkFromIDs(kID, hID, page.markierungen);
       let secElement = getElementFromID(sec[j], !showK ? kunden : hersteller);
-      htmlContent = htmlContent + createRow(mark._id, mark.isMarked, secElement.name, mark.lastModifiedTime);
+      htmlContent = htmlContent + createRow(mark._id, mark.isMarked, secElement.name, mark.lastModifiedTime, (secElement.notiz != null));
     }
 
     var landString = "";
@@ -195,17 +196,17 @@ function configureRows() {
       }
 
       // Message Circle show/hide
-      if (showK) {
-        if (messageCircle.classList.contains("messageHide")) {
-          messageCircle.classList.remove("messageHide");
-          messageCircle.classList.add("messageNew");
-          messageCircle.classList.remove("messageShow");
-        } else if (messageCircle.classList.contains("messageNew")) {
-          messageCircle.classList.add("messageHide");
-          messageCircle.classList.remove("messageNew");
-          messageCircle.classList.remove("messageShow");
-        }
+
+      if (messageCircle.classList.contains("messageHide")) {
+        messageCircle.classList.remove("messageHide");
+        messageCircle.classList.add("messageNew");
+        messageCircle.classList.remove("messageShow");
+      } else if (messageCircle.classList.contains("messageNew")) {
+        messageCircle.classList.add("messageHide");
+        messageCircle.classList.remove("messageNew");
+        messageCircle.classList.remove("messageShow");
       }
+
 
       // EditButton show/hide
       // editButton.classList.toggle("collapsibleEditHide");
@@ -405,7 +406,9 @@ function rowPressed(row) {
     mark.lastModifiedTime = -1;
   }
 
-  row.childNodes[5].innerHTML = dateToTimeLabel(mark.lastModifiedTime)
+  console.log("Row pressed, row:");
+  console.log(row.children);
+  row.children[3].innerHTML = dateToTimeLabel(mark.lastModifiedTime)
   putMark(mark);
   updateStatusCircle(row.parentNode.parentNode);
 }
@@ -419,7 +422,7 @@ function reloadUI() {
   console.log("Showing loading animation");
   showLoadingAnimation();
 
-console.log("Reload UI!");
+  console.log("Reload UI!");
   // Reload page, kunden and hersteller data
   getWithRoute("api/page/" + pageID, (fetchedData) => {
     // Show error if the data is missing
