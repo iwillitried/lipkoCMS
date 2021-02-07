@@ -73,12 +73,12 @@ function renderPage() {
   let main = document.getElementsByTagName("main")[0];
   let searchInput = document.getElementById("searchInput");
 
-  // Show the right placeholder text inside searchbar
+  // Show the correct placeholder text inside searchbar
   searchInput.placeholder = showK ? "Kunden suchen..." : "Hersteller suchen..."
 
   if (!(page && hersteller && kunden)) {
-    return;
     console.error("Error initializing UI: Data field incomplete");
+    return;
   }
 
 
@@ -100,8 +100,12 @@ function renderPage() {
   let rowBox = document.getElementsByClassName("rowBox")[0];
   rowBox.innerHTML = "";
   let prim = showK ? kunden : hersteller;
+
+  console.log("Rendering page: ");
+  console.log(page);
+  console.log(hersteller);
   for (var i = 0; i < prim.length; i++) {
-    if (prim[i].name == "Gesamt" && showK) continue; // Gesamgt soll nicht als Row angezeigt werden
+    if (prim[i].name == "Gesamt" && showK) continue; // Gesamgt soll nicht als Row bei Kunden angezeigt werden
     let primElement = getElementFromID(prim[i]._id, showK ? kunden : hersteller);
     let sec = prim[i].linkedIDs;
     var htmlContent = "";
@@ -111,7 +115,11 @@ function renderPage() {
       let hID = showK ? sec[j] : prim[i]._id;
       let mark = getMarkFromIDs(kID, hID, page.markierungen);
       let secElement = getElementFromID(sec[j], !showK ? kunden : hersteller);
-      htmlContent = htmlContent + createRow(mark._id, mark.isMarked, secElement.name, mark.lastModifiedTime, (secElement.notiz != null));
+      htmlContent = htmlContent + createRow(mark._id, mark.isMarked, secElement.name, mark.lastModifiedTime, (secElement.notiz && secElement.notiz != ""));
+      console.log("row for");
+      console.log(secElement);
+      console.log("Notiz == ''");
+      console.log(secElement.notiz == "");
     }
 
     var landString = "";
@@ -119,8 +127,14 @@ function renderPage() {
       landString = " - " + primElement.land;
     }
     let html = createColl(primElement._id, primElement.name + landString, htmlContent);
-    rowBox.innerHTML = rowBox.innerHTML + html;
 
+
+    // Gesamt wird immer ganz oben angezeigt
+    if (prim[i].name == "Gesamt") {
+      rowBox.innerHTML = html + rowBox.innerHTML;
+    } else {
+      rowBox.innerHTML = rowBox.innerHTML + html;
+    }
   }
   configureRows();
   showPage();
@@ -449,7 +463,7 @@ function reloadUI() {
   });
 }
 
-function initUI() {
+export default function initUI() {
   // Inits all the static parts of the page, only ran once the side loads
   if (uiInited) return;
   uiInited = true;
@@ -518,3 +532,6 @@ function initUI() {
   }
 
 }
+
+
+export {showTimoutError, initUI}

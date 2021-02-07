@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title> Einloggen </title>
+  <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css" integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+  <link rel="stylesheet" href="../css/login.css">
+</head>
+
+<body>
+
+  <form id="form">
+
+
+    <div class="container"  onsubmit="return false" method='post'>
+      <label for="uname"><b>Nutzername</b></label>
+      <input type="text" placeholder="Nutzername eingeben" name="uname" required>
+
+      <label for="psw"><b>Passwort</b></label>
+      <input type="password" placeholder="Passwort eingeben" name="psw" required>
+
+      <button id="submitButton" type="button">Anmelden</button>
+
+      <div id="fail-box">
+        <p>Anmeldung fehlgeschlagen<br>Passwort oder Nutzername falsch</p>
+      </div>
+
+
+    </div>
+
+
+  </form>
+
+</body>
+<script type="module" src="login.js" charset="utf-8"></script>
+</html>

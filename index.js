@@ -10,7 +10,10 @@
 // TODO: ALMOST PERFECT fix dateField position (and resizing when too small!)
 // TODO: OPEN implement form check against i.g. sql injection
 // TODO: OPEN loading animation when page transition
-
+import authenticate from "./auth.js"
+import connect from "./network.js"
+import {showTimoutError, initUI} from './ui.js'
+var token = "";
 var masterTimeoutID = "";
 var showK = true; // Show Kunden or Hersteller mode
 var pageID = "112011";
@@ -19,6 +22,7 @@ var data = {
   kunden: null,
   hersteller: null
 }
+
 // var proxyurl = "https://cors-anywhere.herokuapp.com/";
 // const data = {
 //   message : "Hello World!"
@@ -52,26 +56,26 @@ var data = {
 // });
 
 // Networking stuff
-async function connect(method = "", route = "", body = {}) {
-
-  var options = {
-    method: method, // *GET, POST, PUT, DELETE, etc.
-    mode: 'cors', // no-cors, *cors, same-origin
-    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-    credentials: 'same-origin', // include, *same-origin, omit
-    headers: {
-      'Content-Type': 'application/json'
-      // 'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    redirect: 'follow', // manual, *follow, error
-    referrerPolicy: 'no-referrer' // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    // body: body // body data type must match "Content-Type" header
-  }
-  if (method != "GET") options.body = JSON.stringify(body);
-
-  const response = await fetch("https://lipko-backend.herokuapp.com/" + route, options);
-  return response.json(); // parses JSON response into native JavaScript objects
-}
+// async function connect(method = "", route = "", body = {}) {
+//
+//   var options = {
+//     method: method, // *GET, POST, PUT, DELETE, etc.
+//     mode: 'cors', // no-cors, *cors, same-origin
+//     cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+//     credentials: 'same-origin', // include, *same-origin, omit
+//     headers: {
+//       'Content-Type': 'application/json'
+//       // 'Content-Type': 'application/x-www-form-urlencoded',
+//     },
+//     redirect: 'follow', // manual, *follow, error
+//     referrerPolicy: 'no-referrer' // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+//     // body: body // body data type must match "Content-Type" header
+//   }
+//   if (method != "GET") options.body = JSON.stringify(body);
+//
+//   const response = await fetch("https://lipko-backend.herokuapp.com/" + route, options); // https://lipko-backend.herokuapp.com/
+//   return response.json(); // parses JSON response into native JavaScript objects
+// }
 
 // function fetchPageWithID(pageID, renderPage) {
 //   connect("GET", "api/update/092020/1515928286/", {
@@ -197,7 +201,7 @@ function getElementFromID(id, array) {
 
 function dateToTimeLabel(date) {
   if (date == null) return "nie";
-  if (date == -1) return "-"; 
+  if (date == -1) return "-";
 
   const d = new Date(date);
   const ye = new Intl.DateTimeFormat('de', {
@@ -252,8 +256,8 @@ function addToPageID(value, pageID) {
   return `0${month}`.slice(-2) + year;
 }
 
-
 window.onload = function() {
+  //token = authenticate();
   pageID = getTodaysPageID();
   getWithRoute("api/page/" + pageID, syncFetches); // Fetch todays page
   getWithRoute("api/", syncFetches); // Fetch kunden & hersteller
