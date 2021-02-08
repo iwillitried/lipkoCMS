@@ -22,6 +22,7 @@ header {
   width: 100%;
   height: 150px;
   background-color: var(--header-blue);
+  outline: none;
 }
 
 /* Add and Search Button */
@@ -138,6 +139,12 @@ header .headerButton {
 #navButton {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
+
+}
+
+.buttonBox button {
+  outline: none;
+  cursor: pointer;
 }
 
 .dateNavigator .buttonBox button:active {
@@ -519,6 +526,7 @@ p.checkBoxRightLabel {
     background: none;
     color: white;
     text-decoration: underline;
+    outline: none;
 
   }
 
