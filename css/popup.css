@@ -82,7 +82,7 @@
 
 .modal_body_left input {
   height: 25px;
-  width: 90%; 
+  width: 90%;
 }
 
 .modal_body_left h2 {
@@ -124,24 +124,29 @@
 
 .modal_body_right_searchbox {
   display: grid;
-  grid-template-columns: 10px auto 15%;
+  /* grid-template-columns: 10px auto 5px; */
   height: 100%;
   width: 100%;
   border: solid 1px gray;
-  background-color: #61707D;
+  background-color: #F0F3F6;
 }
 
 .modal_searchbar {
-  padding-left: 7px;
-  width: 100%;
-  height: 60%;
-  margin-top: 7px;
-  background-color: #D8D8D8;
-  border: solid gray 0.5px;
-  -webkit-box-shadow: inset 0px 0px 2px 1px rgba(161, 161, 161, 1);
-  -moz-box-shadow: inset 0px 0px 2px 1px rgba(161, 161, 161, 1);
-  box-shadow: inset 0px 0px 2px 1px rgba(161, 161, 161, 1);
+  /* padding-left: 7px;  */
+  width: 90%;
+  height: 90%;
+  font-size: 22px;
+  font-weight: lighter;
+  margin-bottom: 8px;
+  margin-left: 3px;
+  outline: none;
+
+    /* margin-top: 0px; */
+  background-color: #F0F3F6;
+  border: none;
 }
+
+
 
 ::placeholder {
   /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -200,6 +205,7 @@
 }
 
 .modal_searchbar_button {
+  display: none;
   margin-top: 12.5px;
   margin-left: 24px;
 }

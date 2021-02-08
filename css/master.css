@@ -48,6 +48,7 @@ header .headerButton {
 }
 
 #searchButton:hover {
+  cursor: pointer;
   background-color: var(--header-blue-hover);
 }
 
@@ -61,6 +62,7 @@ header .headerButton {
 }
 
 #addButton:hover {
+  cursor: pointer;
   background-color: var(--header-blue-hover);
 }
 
@@ -75,6 +77,7 @@ header .headerButton {
 }
 
 #changeButton:hover {
+  cursor: pointer;
   background-color: var(--header-blue-hover);
 }
 
@@ -165,7 +168,7 @@ hr.solid {
   /* background-color: white; */
   color: black;
   cursor: pointer;
-  padding: 18px;
+  /* padding: 18px; */
   /* width: 100%; */
   border: none;
   text-align: left;
@@ -476,6 +479,7 @@ p.checkBoxRightLabel {
 }
 
 .refreshButton {
+  cursor: pointer;
   position: relative;
   transform: translate(-50%, -50%);
   top: 50%;

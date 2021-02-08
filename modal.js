@@ -1,3 +1,6 @@
+import {getShowK, setShowK, data, getElementFromID} from "./index.js"
+import {deleteElement, putMark, putElement, postElement, getWithRoute} from "./index.js"
+import {reloadUI, updateMessageCircle} from "./ui.js"
 var isShowingNote = false;
 var isEditing = true;
 var current_row = null;
@@ -65,6 +68,7 @@ function remove_object_after_animating_out() {
 }
 
 function newScrollboxItem(isInclude, id, name) {
+  if (!getShowK() && name == "Gesamt") return null; // Dont show Kunde == "Gesamt" in scrollbox
   let scrollbox_item = document.createElement("div");
   let button = document.createElement("div");
   let nameLabel = document.createElement("p");
@@ -99,6 +103,7 @@ function scrollbox_button_clicked() {
 
 
   let scrollbox_item = newScrollboxItem(isInclude, id, name);
+  if (scrollbox_item == null) return;
   let scrollbox_included = document.getElementsByClassName(isInclude ? "scrollbox_excluded" : "scrollbox_included")[0];
   scrollbox_included.appendChild(scrollbox_item);
 }
@@ -107,20 +112,20 @@ function modal_save_button_clicked() {
   var modal_input_name = document.getElementsByClassName('modal_body_left')[0].childNodes[1];
   var modal_input_land = document.getElementsByClassName('modal_body_left')[0].childNodes[3];
   current_entry.name = modal_input_name.value;
-  if (!showK) current_entry.land = modal_input_land.value
+  if (!getShowK()) current_entry.land = modal_input_land.value
 
   timeoutID = setTimeout(modal_upload_failed, 5000);
   modal_show_loading_animation();
 
   if (isEditing) {
-    putElement(current_entry, showK, modal_upload_completed);
+    putElement(current_entry, getShowK(), modal_upload_completed);
   } else {
-    postElement(current_entry, showK, modal_upload_completed);
+    postElement(current_entry, getShowK(), modal_upload_completed);
   }
 }
 
 function modal_delete_button_clicked() {
-  deleteElement(current_entry._id, showK);
+  deleteElement(current_entry._id, getShowK());
   setTimeout(hide_modal_sucessfully, 200);
 }
 
@@ -192,18 +197,18 @@ function initModal() {
   }
 }
 
-function show_edit_modal(e) {
+export function show_edit_modal(e) {
   isEditing = true;
   let callerID = e.id;
 
-  current_entry = getElementFromID(callerID, (showK ? data.kunden : data.hersteller));
+  current_entry = getElementFromID(callerID, (getShowK() ? data.kunden : data.hersteller));
 
-  var modal_headline = (showK ? "Kunde" : "Hersteller") + " bearbeiten";
+  var modal_headline = (getShowK() ? "Kunde" : "Hersteller") + " bearbeiten";
   var modal_cancel_button_text = "Löschen";
   var modal_save_button_text = "Speichern";
 
-  var modal_land_section = '<h2>Land</h2><input type="text" name="modal_input_name" value="" placeholder="(optional)"><p>Die Kombination aus Name und Land sollte den Hersteller eindeutig beschreiben. Beides kann nach dem Erstellen jederzeit angepasst werden.</p>';
-  var modal_container_content = `<div class="modal_header"><h1 class="modal_headline">${modal_headline}</h1><div class="modal_close_button">x</div></div><div class="modal_body"><div class="modal_body_left"><h2>Name</h2><input type="text" name="modal_input_name" value="${current_entry.name}">${showK ? "" : modal_land_section}</div><div class="modal_body_right"><h2>Verknüpfte ${(!showK?"Kunden":"Hersteller")}</h2><div class="modal_body_right_scrollbox"><div class="scrollbox_included"></div><hr class="solid"><div class="scrollbox_excluded"></div></div><div class="modal_body_right_searchbox"><div></div><input class="modal_searchbar" type="text" name="" value="" placeholder="Nach ${showK?"Hersteller":"Kunde"} suchen"><!-- <div></div> --><div class="modal_include_button modal_searchbar_button modal_button_animation"></div><!-- <div></div> --></div><div></div><div class="modal_body_right_buttonbox"><button class="red_button modal_button modal_button_animation" name="button">${modal_cancel_button_text}</button><button class="blue_button modal_button modal_button_animation" name="button">${modal_save_button_text}</button></div></div></div>`;
+  var modal_land_section = `<h2>Land</h2><input type="text" name="modal_input_name" value="${!getShowK()?current_entry.land:""}" placeholder="(optional)"><p>Die Kombination aus Name und Land sollte den Hersteller eindeutig beschreiben. Beides kann nach dem Erstellen jederzeit angepasst werden.</p>`;
+  var modal_container_content = `<div class="modal_header"><h1 class="modal_headline">${modal_headline}</h1><div class="modal_close_button">x</div></div><div class="modal_body"><div class="modal_body_left"><h2>Name</h2><input type="text" name="modal_input_name" value="${current_entry.name}">${getShowK() ? "" : modal_land_section}</div><div class="modal_body_right"><h2>Verknüpfte ${(!getShowK()?"Kunden":"Hersteller")}</h2><div class="modal_body_right_scrollbox"><div class="scrollbox_included"></div><hr class="solid"><div class="scrollbox_excluded"></div></div><div class="modal_body_right_searchbox"><div></div><input class="modal_searchbar" type="text" name="" value="" placeholder="Nach ${getShowK()?"Hersteller":"Kunde"} suchen"><!-- <div></div> --><div class="modal_include_button modal_searchbar_button modal_button_animation"></div><!-- <div></div> --></div><div></div><div class="modal_body_right_buttonbox"><button class="red_button modal_button modal_button_animation" name="button">${modal_cancel_button_text}</button><button class="blue_button modal_button modal_button_animation" name="button">${modal_save_button_text}</button></div></div></div>`;
 
   let modal = document.getElementById("modal");
   modal.innerHTML = modal_container_content;
@@ -212,19 +217,24 @@ function show_edit_modal(e) {
   let scrollbox_included = document.getElementsByClassName("scrollbox_included")[0];
   scrollbox_excluded.innerHTML = "";
   scrollbox_included.innerHTML = "";
-  let prim = (!showK ? data.kunden : data.hersteller);
-  let sec = (!showK ? data.hersteller : data.kunden);
+  let prim = (!getShowK() ? data.kunden : data.hersteller);
+  let sec = (!getShowK() ? data.hersteller : data.kunden);
   for (var i = 0; i < prim.length; i++) {
     let name = prim[i].name;
     let id = prim[i]._id;
 
 
     if (current_entry.linkedIDs.includes(id)) {
-      let scrollbox_item = newScrollboxItem(false, id, name);
-      scrollbox_included.appendChild(scrollbox_item);
+      let scrollbox_item = newScrollboxItem(false, id, name + (prim[i].land && prim[i].land != "" ? " - " + prim[i].land : ""));
+      if (scrollbox_item) {
+        scrollbox_included.appendChild(scrollbox_item);
+      }
+
     } else {
-      let scrollbox_item = newScrollboxItem(true, id, name);
-      scrollbox_excluded.appendChild(scrollbox_item);
+      let scrollbox_item = newScrollboxItem(true, id, name + (prim[i].land && prim[i].land != "" ? " - " + prim[i].land : ""));
+      if (scrollbox_item) {
+        scrollbox_excluded.appendChild(scrollbox_item);
+      }
     }
   }
 
@@ -232,7 +242,7 @@ function show_edit_modal(e) {
   showModal();
 }
 
-function show_add_modal() {
+export function show_add_modal() {
   console.log("Show edit modal!");
   isEditing = false;
   current_entry = {
@@ -241,31 +251,32 @@ function show_add_modal() {
     linkedIDs: []
   }
 
-  var modal_headline = "Neuen " + (showK ? "Kunde" : "Hersteller") + " anlegen";
+  var modal_headline = "Neuen " + (getShowK() ? "Kunde" : "Hersteller") + " anlegen";
   var modal_save_button_text = "Speichern";
 
   var modal_land_section = '<h2>Land</h2><input type="text" name="modal_input_name" value="" placeholder="(optional)"><p>Die Kombination aus Name und Land sollte den Hersteller eindeutig beschreiben. Beides kann nach dem Erstellen jederzeit angepasst werden.</p>';
-  var modal_container_content = `<div class="modal_header"><h1 class="modal_headline">${modal_headline}</h1><div class="modal_close_button">x</div></div><div class="modal_body"><div class="modal_body_left"><h2>Name</h2><input type="text" name="modal_input_name" value="">${showK ? "" : modal_land_section}</div><div class="modal_body_right"><h2>Verknüpfte ${(!showK?"Kunden":"Hersteller")}</h2><div class="modal_body_right_scrollbox"><div class="scrollbox_included"></div><hr class="solid"><div class="scrollbox_excluded"></div></div><div class="modal_body_right_searchbox"><div></div><input class="modal_searchbar" type="text" name="" value="" placeholder="Nach ${showK?"Hersteller":"Kunde"} suchen"><!-- <div></div> --><div class="modal_include_button modal_searchbar_button modal_button_animation"></div><!-- <div></div> --></div><div></div><div class="modal_body_right_buttonbox"><button class="blue_button modal_button modal_button_animation" name="button">${modal_save_button_text}</button></div></div></div>`;
+  var modal_container_content = `<div class="modal_header"><h1 class="modal_headline">${modal_headline}</h1><div class="modal_close_button">x</div></div><div class="modal_body"><div class="modal_body_left"><h2>Name</h2><input type="text" name="modal_input_name" value="">${getShowK() ? "" : modal_land_section}</div><div class="modal_body_right"><h2>Verknüpfte ${(!getShowK()?"Kunden":"Hersteller")}</h2><div class="modal_body_right_scrollbox"><div class="scrollbox_included"></div><hr class="solid"><div class="scrollbox_excluded"></div></div><div class="modal_body_right_searchbox"><div></div><input class="modal_searchbar" type="text" name="" value="" placeholder="Nach ${getShowK()?"Hersteller":"Kunde"} suchen"><!-- <div></div> --><div class="modal_include_button modal_searchbar_button modal_button_animation"></div><!-- <div></div> --></div><div></div><div class="modal_body_right_buttonbox"><button class="blue_button modal_button modal_button_animation" name="button">${modal_save_button_text}</button></div></div></div>`;
 
   let modal = document.getElementById("modal");
   modal.innerHTML = modal_container_content;
 
   let scrollbox_excluded = document.getElementsByClassName("scrollbox_excluded")[0];
   scrollbox_excluded.innerHTML = "";
-  let prim = (!showK ? data.kunden : data.hersteller);
+  let prim = (!getShowK() ? data.kunden : data.hersteller);
   for (var i = 0; i < prim.length; i++) {
     let name = prim[i].name;
     let id = prim[i]._id;
-    let scrollbox_item = newScrollboxItem(true, id, name);
-
-    scrollbox_excluded.appendChild(scrollbox_item);
+    let scrollbox_item = newScrollboxItem(true, id, name + (prim[i].land && prim[i].land != "" ? " - " + prim[i].land : ""));
+    if (scrollbox_item) {
+      scrollbox_excluded.appendChild(scrollbox_item);
+    }
   }
 
   initModal();
   showModal();
 }
 
-function show_message_modal(row) {
+export function show_message_modal(row) {
   let kunde = getElementFromID(row.id, data.kunden);
   let notiz = kunde.notiz || ""
   current_row = row;
@@ -315,7 +326,7 @@ function modal_showOnly(ids) {
 
 function modal_filterBy(term) {
   let displayed = [];
-  let prim = showK?data.hersteller:data.kunden;
+  let prim = getShowK()?data.hersteller:data.kunden;
   let results = prim.filter(e => (e.name.toLowerCase().includes(term.toLowerCase())));
 
   for (var i = 0; i < results.length; i++) {

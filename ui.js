@@ -1,3 +1,6 @@
+import {pageIDToDateString, pageID, data, getMasterTimeoutID, setMasterTimeoutID, getShowK, setShowK, getElementFromID, getMarkFromIDs, dateToTimeLabel, addToPageID, setPageID, getPageID, getTodaysPageID, getMarksFromIDAndName} from "./index.js"
+import {deleteElement, putMark, putElement, postElement, getWithRoute} from "./index.js"
+import * as Modal from "./modal.js"
 var clickedRowButton = false;
 var beforeSearchHTMLContent = "";
 var uiInited = false;
@@ -51,11 +54,11 @@ function createColl(id, text, content) {
   `;
 }
 
-function createRow(markID, isMarked, name, lastModifiedTime, hasNote) {
+function createRow(markID, isMarked, name, land, lastModifiedTime, hasNote) {
   return `
   <div class="checkboxRow" id=${markID} onclick=rowPressed(this)>
     <div class="checkbox ${(isMarked?"marked":"unmarked")}"></div>
-    <p class="checkBoxLeftLabel">${name}</p>
+    <p class="checkBoxLeftLabel">${name}${(land != ""?" - ": "") + land}</p>
     <div class="checkboxMessageDot ${hasNote?"":"noDot"}"></div>
     <p class="checkBoxRightLabel">${dateToTimeLabel(lastModifiedTime)}</p>
   </div>
@@ -63,9 +66,9 @@ function createRow(markID, isMarked, name, lastModifiedTime, hasNote) {
 }
 // Called after the current page got loaded into the global var page
 function renderPage() {
-  if (masterTimeoutID != "") {
-    clearTimeout(masterTimeoutID);
-    masterTimeoutID = "";
+  if (getMasterTimeoutID != "") {
+    clearTimeout(getMasterTimeoutID);
+    setMasterTimeoutID("");
   }
   let page = data.page;
   let hersteller = data.hersteller;
@@ -74,7 +77,7 @@ function renderPage() {
   let searchInput = document.getElementById("searchInput");
 
   // Show the correct placeholder text inside searchbar
-  searchInput.placeholder = showK ? "Kunden suchen..." : "Hersteller suchen..."
+  searchInput.placeholder = getShowK() ? "Kunden suchen..." : "Hersteller suchen..."
 
   if (!(page && hersteller && kunden)) {
     console.error("Error initializing UI: Data field incomplete");
@@ -99,31 +102,28 @@ function renderPage() {
 
   let rowBox = document.getElementsByClassName("rowBox")[0];
   rowBox.innerHTML = "";
-  let prim = showK ? kunden : hersteller;
+  let prim = getShowK() ? kunden : hersteller;
 
   console.log("Rendering page: ");
   console.log(page);
   console.log(hersteller);
   for (var i = 0; i < prim.length; i++) {
-    if (prim[i].name == "Gesamt" && showK) continue; // Gesamgt soll nicht als Row bei Kunden angezeigt werden
-    let primElement = getElementFromID(prim[i]._id, showK ? kunden : hersteller);
+    if (prim[i].name == "Gesamt" && getShowK()) continue; // Gesamgt soll nicht als Row bei Kunden angezeigt werden
+    let primElement = getElementFromID(prim[i]._id, getShowK() ? kunden : hersteller);
     let sec = prim[i].linkedIDs;
     var htmlContent = "";
 
     for (var j = 0; j < sec.length; j++) {
-      let kID = showK ? prim[i]._id : sec[j];
-      let hID = showK ? sec[j] : prim[i]._id;
+      let kID = getShowK() ? prim[i]._id : sec[j];
+      let hID = getShowK() ? sec[j] : prim[i]._id;
       let mark = getMarkFromIDs(kID, hID, page.markierungen);
-      let secElement = getElementFromID(sec[j], !showK ? kunden : hersteller);
-      htmlContent = htmlContent + createRow(mark._id, mark.isMarked, secElement.name, mark.lastModifiedTime, (secElement.notiz && secElement.notiz != ""));
-      console.log("row for");
-      console.log(secElement);
-      console.log("Notiz == ''");
-      console.log(secElement.notiz == "");
+      let secElement = getElementFromID(sec[j], !getShowK() ? kunden : hersteller);
+      htmlContent = htmlContent + createRow(mark._id, mark.isMarked, secElement.name, secElement.land?secElement.land:"", mark.lastModifiedTime, (secElement.notiz && secElement.notiz != ""));
+
     }
 
     var landString = "";
-    if (!showK && primElement.land != "") {
+    if (!getShowK() && primElement.land != "") {
       landString = " - " + primElement.land;
     }
     let html = createColl(primElement._id, primElement.name + landString, htmlContent);
@@ -183,7 +183,7 @@ function configureRows() {
   var rows = document.getElementsByClassName("row");
   for (var i = 0; i < rows.length; i++) {
     updateStatusCircle(rows[i]);
-    if (showK) updateMessageCircle(rows[i]);
+    if (getShowK()) updateMessageCircle(rows[i]);
   }
 
   for (i = 0; i < coll.length; i++) {
@@ -230,7 +230,7 @@ function configureRows() {
       //   console.log(children);
       //   row.style.gridTemplateColumns = "50px auto 65px 50px 50px";
       //   children[4].style.display = "inherit";
-      //   if (showK) {
+      //   if (getShowK()) {
       //     children[2].classList.remove("messageHide");
       //     children[2].classList.add("messageNew");
       //     children[2].classList.remove("messageShow");
@@ -238,7 +238,7 @@ function configureRows() {
       // } else {
       //   row.style.gridTemplateColumns = "50px auto 50px";
       //   children[4].style.display = "none";
-      //   if (showK) {
+      //   if (getShowK()) {
       //     let kunde = getElementFromID(row.parentNode.id, data.kunden);
       //     if (!(kunde.message) || (kunde.message == "")) {
       //       children[2].classList.add("messageHide");
@@ -260,14 +260,14 @@ function configureRows() {
     var messageCircle = coll[i].children[2];
     messageCircle.addEventListener("click", function() {
       clickedRowButton = true;
-      show_message_modal(this.parentNode.parentNode);
+      Modal.show_message_modal(this.parentNode.parentNode);
     })
 
     // Add addEventListener to edit button and hide it
     var editButton = coll[i].children[4];
     editButton.addEventListener("click", function() {
       clickedRowButton = true;
-      show_edit_modal(this.parentNode.parentNode);
+      Modal.show_edit_modal(this.parentNode.parentNode);
     });
 
     var statusCircle = coll[i].children[3];
@@ -313,7 +313,7 @@ function filterBy(term) {
   var sec = [];
   var displayed = [];
 
-  if (showK) {
+  if (getShowK()) {
     prim = kunden;
     sec = hersteller;
   } else {
@@ -329,7 +329,7 @@ function filterBy(term) {
     prim.forEach((item, i) => {
       displayed.push({
         primID: item._id,
-        markIDs: getMarksFromIDAndName(item._id, "", data.page.markierungen, prim, [], showK)
+        markIDs: getMarksFromIDAndName(item._id, "", data.page.markierungen, prim, [], getShowK())
       });
     });
   } else {
@@ -337,7 +337,7 @@ function filterBy(term) {
     prim.forEach((item, i) => {
       displayed.push({
         primID: item._id,
-        markIDs: getMarksFromIDAndName(item._id, termsArray[1], data.page.markierungen, prim, (showK ? data.hersteller : data.kunden), showK)
+        markIDs: getMarksFromIDAndName(item._id, termsArray[1], data.page.markierungen, prim, (getShowK() ? data.hersteller : data.kunden), getShowK())
       });
     });
   }
@@ -372,7 +372,7 @@ function showOnly(elementArray) {
     var index = null;
     // See if the row should be displayed
     for (var i = 0; i < elementArray.length; i++) {
-      element = elementArray[i];
+      let element = elementArray[i];
       if (row.id == element.primID) {
         index = i;
         included = true;
@@ -405,6 +405,7 @@ function showOnly(elementArray) {
 }
 
 function rowPressed(row) {
+  console.log("rowPressed with", row);
   let id = row.id;
   let mark = data.page.markierungen.find(e => {
     if (e._id == id) return e;
@@ -428,7 +429,7 @@ function rowPressed(row) {
 }
 
 function reloadUI() {
-  let dateString = pageIDToDateString(pageID);
+  let dateString = pageIDToDateString(getPageID());
   let dateField = document.getElementById("dateField");
   dateField.innerHTML = dateString;
   console.log("Hiding page");
@@ -438,7 +439,7 @@ function reloadUI() {
 
   console.log("Reload UI!");
   // Reload page, kunden and hersteller data
-  getWithRoute("api/page/" + pageID, (fetchedData) => {
+  getWithRoute("api/page/" + getPageID(), (fetchedData) => {
     // Show error if the data is missing
     // console.log("Got page data: ");
     // console.log(fetchedData);
@@ -468,7 +469,7 @@ export default function initUI() {
   if (uiInited) return;
   uiInited = true;
 
-  let dateString = pageIDToDateString(pageID);
+  let dateString = pageIDToDateString(getPageID());
   let dateField = document.getElementById("dateField");
   dateField.innerHTML = dateString;
   showLoadingAnimation();
@@ -487,25 +488,25 @@ export default function initUI() {
 
 
   navButtonLeft.onclick = function() {
-    pageID = addToPageID(-1, pageID);
+    setPageID(addToPageID(-1, getPageID()));
     reloadUI();
   }
 
   navButtonToday.onclick = function() {
     let todaysPageID = getTodaysPageID();
-    if (pageID == todaysPageID) return;
-    pageID = todaysPageID;
+    if (getPageID() == todaysPageID) return;
+    setPageID(todaysPageID);
     reloadUI();
   }
 
   navButtonRight.onclick = function() {
-    pageID = addToPageID(1, pageID);
+    setPageID(addToPageID(1, getPageID()));
     reloadUI();
   }
 
   // changeButton
   changeButton.onclick = function() {
-    showK = !showK;
+    setShowK(!getShowK());
     this.classList.toggle("kView");
     this.classList.toggle("hView");
     renderPage();
@@ -528,10 +529,11 @@ export default function initUI() {
   });
 
   addButton.onclick = function() {
-    show_add_modal();
+    Modal.show_add_modal();
   }
 
 }
 
 
-export {showTimoutError, initUI}
+export {showTimoutError, initUI, reloadUI, rowPressed, updateMessageCircle}
+window.rowPressed = rowPressed;

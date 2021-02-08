@@ -12,7 +12,7 @@
 // TODO: OPEN loading animation when page transition
 import authenticate from "./auth.js"
 import connect from "./network.js"
-import {showTimoutError, initUI} from './ui.js'
+import {showTimoutError, initUI, rowPressed} from './ui.js'
 var token = "";
 var masterTimeoutID = "";
 var showK = true; // Show Kunden or Hersteller mode
@@ -84,27 +84,27 @@ var data = {
 //   }).catch(err => {console.error(err);})
 // }
 
-function deleteElement(id, isK) {
+export function deleteElement(id, isK) {
   connect("DELETE", "api/"+ (isK?"k":"h") + "/"+ id);
 }
 
-function putMark(mark) {
+export function putMark(mark) {
   connect("PUT", "api/mark/" + pageID, mark);
 }
 
-function putElement(element, isK, callback) {
+export function putElement(element, isK, callback) {
   connect("PUT", "api/" + (isK ? "k" : "h"), element).then(data => {
     if (callback) callback();
   });
 }
 
-function postElement(element, isK, callback) {
+export function postElement(element, isK, callback) {
   connect("POST", "api/" + (isK ? "k" : "h"), element).then(data => {
     callback();
   });
 }
 
-function getWithRoute(route, callback) {
+export function getWithRoute(route, callback) {
   connect("GET", route, {}).then(data => {
     callback(data);
   });
@@ -128,18 +128,14 @@ function syncFetches(syncData, type) { // Wait until both fetch functions have r
   }
 }
 
-// connect("POST", "api", { kunde1 }).then(data => {
-//     console.log(data);
-//   })
-//
-//   connect("POST", "api", { hersteller1 }).then(data => {
-//       console.log(data);
-//     })
-// connect("POST", "api", { message: "Hello World!"}).then(data => {
-//   console.log(data);
-// })
+function getMasterTimeoutID() {return masterTimeoutID;}
+function setMasterTimeoutID(value) {masterTimeoutID = value;}
 
-// helper funcs
+function getShowK() {return showK;}
+function setShowK(value) {showK = value;}
+
+function getPageID() {return pageID;}
+function setPageID(value) {pageID = value;}
 
 function getTodaysPageID() {
   return `0${(new Date()).getUTCMonth()}`.slice(-2) + (new Date()).getUTCFullYear();
@@ -263,3 +259,7 @@ window.onload = function() {
   getWithRoute("api/", syncFetches); // Fetch kunden & hersteller
   masterTimeoutID = setTimeout(showTimoutError, 10000);
 };
+
+
+
+export {pageIDToDateString, pageID, data, getMasterTimeoutID, setMasterTimeoutID, getShowK, setShowK, getElementFromID, getMarkFromIDs, dateToTimeLabel, addToPageID, setPageID, getPageID, getTodaysPageID, getMarksFromIDAndName}
