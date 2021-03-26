@@ -17,20 +17,20 @@ body {
 /* HEADER SECTION */
 header {
   display: grid;
-  grid-template-columns: 180px auto 140px 180px;
+  grid-template-columns: 85px auto 85px 110px;
   position: fixed;
   width: 100%;
-  height: 150px;
+  height: 90px;
   background-color: var(--header-blue);
   outline: none;
 }
 
 /* Add and Search Button */
 header .headerButton {
-  width: 100px;
-  height: 100px;
-  margin: 20px 40px 20px 40px;
-  border-radius: 5px;
+  width: 75px;
+  height: 75px;
+  margin: 10px 20px;
+  border-radius: 0px;
   /* transition: background-color 0.2s ease-out; */
   border-style: none;
   z-index: 10;
@@ -104,19 +104,21 @@ header .headerButton {
 
 /* Holds the date of the current page */
 .dateNavigator p {
-  margin: 10px auto;
+  position: absolute;
+  transform: translateX(-50%);
+  margin: 10px 0 0 0;
   text-align: center;
-  font-size: 40px;
+  font-size: 30px;
   /* font-size: min(max(16px, 4vw), 52px); */
   font-weight: lighter;
   color: white;
 }
 
 .dateNavigator .buttonBox {
-  transform: translate(-75%, -0%);
+  transform: translate(-50%, -0%);
   position: absolute;
-  margin: 10px 0%;
-  left: 50%;
+  top: 40px;
+  margin: 10px 0;
   /* bottom: 5px; */
   display: grid;
   grid-template-columns: auto 50px 75px 50px auto;
@@ -153,7 +155,7 @@ header .headerButton {
 
 /*  BODY SECTION */
 main {
-  padding-top: 150px;
+  padding-top: 90px;
 }
 
 /* Solid border */
@@ -520,7 +522,7 @@ p.checkBoxRightLabel {
   header {
     grid-template-columns: 100px auto 100px 100px;
     width: 100%;
-    height: 100px;
+    height: 75px;
     /* background-color: red; */
   }
 
@@ -549,7 +551,7 @@ p.checkBoxRightLabel {
   }
 
   main {
-    padding-top: 100px;
+    padding-top: 75px;
   }
 
   .dateNavigator p {
@@ -573,7 +575,7 @@ p.checkBoxRightLabel {
   .dateNavigator .buttonBox {
     transform: translate(-75%, -0%);
     position: absolute;
-    margin: 10px 0%;
+    margin: 0;
     left: 50%;
     /* bottom: 5px; */
     display: grid;
