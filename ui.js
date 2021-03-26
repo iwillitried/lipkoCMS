@@ -210,12 +210,12 @@ function configureRows() {
       }
 
       // Message Circle show/hide
-
-      if (messageCircle.classList.contains("messageHide")) {
+      let showK = getShowK();
+      if (showK && messageCircle.classList.contains("messageHide")) {
         messageCircle.classList.remove("messageHide");
         messageCircle.classList.add("messageNew");
         messageCircle.classList.remove("messageShow");
-      } else if (messageCircle.classList.contains("messageNew")) {
+      } else if (showK && messageCircle.classList.contains("messageNew")) {
         messageCircle.classList.add("messageHide");
         messageCircle.classList.remove("messageNew");
         messageCircle.classList.remove("messageShow");
